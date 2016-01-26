@@ -187,7 +187,16 @@ public class DateTimeGPSService extends Service
                 android.provider.Settings.Global.AUTO_TIME, 0);
         if(0 < autoTime)
         {
+            //Check if we have received nmea data before continue
+            if(mGPRMCData==null) {
+                Log.d(LOG_TAG,"No GPS data received yet.");
+                return null; //cannot continue
+            }
+            //Now split
             String[] parts = mGPRMCData.split(",");
+            //now check that we have a complete processable data
+            if(parts.length<10) return null; //cannot continue
+
             SimpleDateFormat simpleDate = new SimpleDateFormat("ddMMyy HHmmss.SS");
             calendar = Calendar.getInstance();
             calendar.set(Calendar.YEAR, INITIAL_YEAR);
