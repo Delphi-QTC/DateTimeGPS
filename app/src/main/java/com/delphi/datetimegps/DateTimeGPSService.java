@@ -43,6 +43,10 @@ public class DateTimeGPSService extends Service
     private static final int RESTART_SERVICE = 60000;
     /** Set initial year */
     private static final int INITIAL_YEAR = 2000;
+    /** Nmea Constants http://www.gpsinformation.org/dale/nmea.htm **/
+    private static final int  NMEA_TIME = 1;
+    private static final int  NMEA_DATE = 9;
+    private static final int  NMEA_MIN_VALID_PARTS = 10;
 
 /*===========================================================================*
  * Data Objects
@@ -195,7 +199,7 @@ public class DateTimeGPSService extends Service
             //Now split
             String[] parts = mGPRMCData.split(",");
             //now check that we have a complete processable data
-            if(parts.length<10) return null; //cannot continue
+            if(parts.length<NMEA_MIN_VALID_PARTS) return null; //cannot continue
 
             SimpleDateFormat simpleDate = new SimpleDateFormat("ddMMyy HHmmss.SS");
             calendar = Calendar.getInstance();
@@ -205,7 +209,7 @@ public class DateTimeGPSService extends Service
             try
             {
                 simpleDate.setTimeZone(TimeZone.getTimeZone("GMT"));
-                calendar.setTime(simpleDate.parse(parts[9] + " " + parts[1]));
+                calendar.setTime(simpleDate.parse(parts[NMEA_DATE] + " " + parts[NMEA_TIME]));
             } catch (ParseException e)
             {
                 e.printStackTrace();
