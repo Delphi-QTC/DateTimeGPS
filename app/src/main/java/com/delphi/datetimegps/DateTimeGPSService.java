@@ -38,9 +38,9 @@ public class DateTimeGPSService extends Service
     /** Tag for DIReCt Clock & Alarm logs */
     private static final String LOG_TAG = "DateTimeGPSService";
     /** Time in milliseconds to update the GPS time */
-    private static final int UPDATE_GPS_TIME = 60000;
+    private static final int UPDATE_GPS_TIME = 10000;
     /** Restart service if GPS is not enabled */
-    private static final int RESTART_SERVICE = 60000;
+    private static final int RESTART_SERVICE = 10000;
     /** Set initial year */
     private static final int INITIAL_YEAR = 2000;
     /** Nmea Constants http://www.gpsinformation.org/dale/nmea.htm **/
@@ -240,6 +240,7 @@ public class DateTimeGPSService extends Service
         @Override
         public void onReceive(Context context, Intent intent)
         {
+            Log.d(LOG_TAG, "DateTimeGPS launched");
             Intent serviceIntent = new Intent(context, DateTimeGPSService.class);
             context.startService(serviceIntent);
         }
