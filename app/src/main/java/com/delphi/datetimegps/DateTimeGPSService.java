@@ -38,9 +38,9 @@ public class DateTimeGPSService extends Service
     /** Tag for DIReCt Clock & Alarm logs */
     private static final String LOG_TAG = "DateTimeGPSService";
     /** Time in milliseconds to update the GPS time */
-    private static final int UPDATE_GPS_TIME = 10000;
+    private static final int UPDATE_GPS_TIME = 30000;
     /** Restart service if GPS is not enabled */
-    private static final int RESTART_SERVICE = 10000;
+    private static final int RESTART_SERVICE = 30000;
     /** Set initial year */
     private static final int INITIAL_YEAR = 2000;
     /** Nmea Constants http://www.gpsinformation.org/dale/nmea.htm **/
@@ -76,7 +76,8 @@ public class DateTimeGPSService extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        return START_STICKY;
+        Log.v(LOG_TAG, "OnStartCommand ");
+        return START_REDELIVER_INTENT;
     }
 
     /**
@@ -175,7 +176,7 @@ public class DateTimeGPSService extends Service
                 {
                     ((AlarmManager) getApplication().getSystemService(Context.ALARM_SERVICE)).setTime(when);
                 }
-                Log.v(LOG_TAG, "Date & Time updated from GPS!");
+                Log.v(LOG_TAG, "Date & Time updated from GPS!  " + when);
             }
         }
     }
@@ -205,11 +206,13 @@ public class DateTimeGPSService extends Service
             calendar = Calendar.getInstance();
             calendar.set(Calendar.YEAR, INITIAL_YEAR);
             simpleDate.set2DigitYearStart(calendar.getTime());
+            Log.v(LOG_TAG, "Decoding Calendar object.");
 
             try
             {
                 simpleDate.setTimeZone(TimeZone.getTimeZone("GMT"));
                 calendar.setTime(simpleDate.parse(parts[NMEA_DATE] + " " + parts[NMEA_TIME]));
+                Log.v(LOG_TAG, "Time set");
             } catch (ParseException e)
             {
                 e.printStackTrace();
@@ -229,7 +232,14 @@ public class DateTimeGPSService extends Service
         return calendar;
     }
 
-/*===========================================================================*
+    @Override
+    public void onDestroy() {
+        Log.v(LOG_TAG, "onDestroy Called");
+        stopSelf();
+        super.onDestroy();
+    }
+
+    /*===========================================================================*
  * Inner classes
  *===========================================================================*/
     /**
